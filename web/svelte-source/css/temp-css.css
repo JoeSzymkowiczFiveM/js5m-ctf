@@ -1,0 +1,36 @@
+@import './colors.css';
+@import './constants.css';
+
+.main-body {
+  position: absolute;
+  transform: translateX(50%);
+  margin-left: auto;
+  margin-right: auto;
+  right: 50%;   
+  top: 1vw;
+  background-color: var(--background-color);
+  border-radius: 0.3vw;
+  width: 10vw;
+  height: 3vw;
+  display: flex;
+  flex-direction: row;
+  justify-content:space-evenly;
+  padding: 1px;
+}
+
+.inner-child {
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 47%;
+  height: 80%;
+  border-radius: 0.4vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-child > p {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 2vh;
+  color: var(--light-color);
+}

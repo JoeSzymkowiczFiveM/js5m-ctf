@@ -1,0 +1,52 @@
+/** TEXT SIZES **/
+.txt-2xs {
+    font-size: 0.5vw;
+    line-height: 0.6vw;
+}
+
+.txt-xs {
+    font-size: 0.7vw;
+    line-height: 0.8vw;
+}
+  
+.txt-sm {
+    font-size: 0.8vw;
+    line-height: 0.9vw;
+}
+
+.txt-md {
+    font-size: 1vw;
+    line-height: 1.1vw;
+}
+
+.txt-2md {
+    font-size: 1.2vw;
+    line-height: 1.3vw;
+}
+
+.txt-lg {
+    font-size: 2vw;
+    line-height: 2.1vw;
+}
+
+.txt-2lg {
+    font-size: 2.79vw;
+    line-height: 2.8vw;
+}
+/** TEXT SIZES **/
+
+/** MARGIN TOP **/
+.mtop-1 { margin-top: 0.3vw; }
+
+.mtop-2 { margin-top: 1vw; }
+
+.mtop-3 { margin-top: 1.5vw; }
+/** MARGIN TOP **/
+
+/** MARGIN BOTTOM **/
+.mbot-1 { margin-bottom: 0.3vw; }
+
+.mbot-2 { margin-bottom: 0.6vw; }
+
+.mbot-3 { margin-bottom: 0.9vw; }
+/** MARGIN BOTTOM **/

@@ -1,0 +1,290 @@
+AddEventHandler("onResourceStop", function(resourceName)
+    if GetCurrentResourceName() == resourceName then
+        for _, v in pairs(Config.TeamData) do
+            if DoesEntityExist(NetworkGetEntityFromNetworkId(v['flagNet'])) then
+                DeleteEntity(NetworkGetEntityFromNetworkId(v['flagNet']))
+            end
+        end
+    end
+end)
+
+AddEventHandler('playerDropped', function(reason)
+    if Config.MatchInfo.started then
+        local src = source
+        for k, v in pairs(Config.TeamData) do
+            if v.enemyFlagCarrier == src then
+                if DoesEntityExist(NetworkGetEntityFromNetworkId(Config.TeamData[k]['flagNet'])) then
+                    DeleteEntity(NetworkGetEntityFromNetworkId(Config.TeamData[k]['flagNet']))
+                end
+                local respawnCoords = Config.TeamData[k]['baseflagCoords']
+                local ent = CreateObject(Config.TeamData[k]['prop'], respawnCoords.x, respawnCoords.y, respawnCoords.z-1.0, true, true, false)
+                while not DoesEntityExist(ent) do
+                    Wait(10)
+                end
+                Wait(100)
+                SetEntityHeading(ent, respawnCoords.w)
+                FreezeEntityPosition(ent, true)
+                Config.TeamData[k]['currentflagCoords'] = respawnCoords
+                Config.TeamData[k]['flagNet'] = NetworkGetNetworkIdFromEntity(ent)
+                Config.TeamData[k]['enemyFlagCarrier'] = nil
+                Config.TeamData[k]['flagStatus'] = 'returned'
+
+                SendMatchNotification(capitalize(k) .. ' flag has been returned due to disconnect.', k)
+                local scores = {['red'] = Config.TeamData['red']['points'], ['blue'] = Config.TeamData['blue']['points']}
+                TriggerClientEvent('js5m-ctf:client:flagStatus', -1, k, Config.TeamData[k]['flagStatus'], Config.TeamData[k]['currentflagCoords'], Config.TeamData[k]['flagNet'], source, scores)
+                --TODO: need to remove source from teammembers
+                break
+            end
+        end
+    end
+end)
+
+local function capitalize(str)
+    return (str:gsub("^%l", string.upper))
+end
+
+local function SendMatchNotification(message, team)
+    local messageStyle = Config.MatchInfo['notifyStyle'][team]
+    for i = 1, #Config.MatchInfo.sources, 1 do
+        TriggerClientEvent('ox_lib:notify', Config.MatchInfo.sources[i], {title = 'CTF', description = message, type = 'inform', style = messageStyle})
+    end
+end
+
+function CheckRestrictedUsers(src)
+    local response = false
+    if not Config.Rules['restrictedCreation'] then return true end
+    local identifiers = GetPlayerIdentifiers(src)
+    local license = identifiers[2]
+    for _, v in pairs(Config.Rules['restrictedCreators']) do
+        if v == license then
+            response = true
+            break
+        end
+    end
+    if not response then
+        TriggerClientEvent('ox_lib:notify', src, {title = 'CTF', description = 'You are not authorized to create a match.', type = "error"})
+    end
+    return response
+end
+
+local function endCTFMatch(winnerTeam, loserTeam, draw)
+    Config.MatchInfo.started = false
+    if not draw then
+        for _, v in pairs(Config.TeamData[winnerTeam]['members']) do
+            TriggerClientEvent('js5m-ctf:client:endGame', v.src, 'WINNER')
+        end
+        for _, v in pairs(Config.TeamData[loserTeam]['members']) do
+            TriggerClientEvent('js5m-ctf:client:endGame', v.src, 'LOSER')
+        end
+    else
+        for _, v in pairs(Config.TeamData[winnerTeam]['members']) do
+            TriggerClientEvent('js5m-ctf:client:endGame', v.src, 'DRAW')
+        end
+        for _, v in pairs(Config.TeamData[loserTeam]['members']) do
+            TriggerClientEvent('js5m-ctf:client:endGame', v.src, 'DRAW')
+        end
+    end
+    for _, v in pairs(Config.TeamData) do
+        if DoesEntityExist(NetworkGetEntityFromNetworkId(v.flagNet)) then
+            DeleteEntity(NetworkGetEntityFromNetworkId(v.flagNet))
+        end
+    end
+    Config.MatchInfo = lib.table.deepclone(Config.OrigMatchInfo)
+    Config.TeamData = lib.table.deepclone(Config.OrigTeamData)
+end
+
+local function isCTFPlayer(source)
+    local response = false
+    for i = 1, #Config.MatchInfo['sources'], 1 do
+        if Config.MatchInfo['sources'][i] == source then
+            response = true
+            break
+        end
+    end
+    return response
+end
+
+RegisterServerEvent('js5m-ctf:server:flagStatus', function(team, status, coords)
+    if Config.MatchInfo.started then
+        if status == 'dropped' then
+            if DoesEntityExist(NetworkGetEntityFromNetworkId(Config.TeamData[team]['flagNet'])) then
+                DeleteEntity(NetworkGetEntityFromNetworkId(Config.TeamData[team]['flagNet']))
+            end
+            local ent = CreateObject(Config.TeamData[team]['prop'], coords.x, coords.y, coords.z, true, true, false)
+            while not DoesEntityExist(ent) do
+                Wait(10)
+            end
+            Wait(100)
+            SetEntityHeading(ent, coords.w)
+            FreezeEntityPosition(ent, true)
+            Config.TeamData[team]['currentflagCoords'] = coords
+            Config.TeamData[team]['flagNet'] = NetworkGetNetworkIdFromEntity(ent)
+            Config.TeamData[team]['enemyFlagCarrier'] = nil
+
+            SendMatchNotification(capitalize(team) .. ' flag has been dropped.', team)
+        elseif status == 'returned' then
+            if DoesEntityExist(NetworkGetEntityFromNetworkId(Config.TeamData[team]['flagNet'])) then
+                DeleteEntity(NetworkGetEntityFromNetworkId(Config.TeamData[team]['flagNet']))
+            end
+            local respawnCoords = Config.TeamData[team]['baseflagCoords']
+            local ent = CreateObject(Config.TeamData[team]['prop'], respawnCoords.x, respawnCoords.y, respawnCoords.z-1.0, true, true, false)
+            while not DoesEntityExist(ent) do
+                Wait(10)
+            end
+            Wait(100)
+            SetEntityHeading(ent, respawnCoords.w)
+            FreezeEntityPosition(ent, true)
+            Config.TeamData[team]['currentflagCoords'] = GetEntityCoords(ent)
+            Config.TeamData[team]['flagNet'] = NetworkGetNetworkIdFromEntity(ent)
+            Config.TeamData[team]['enemyFlagCarrier'] = nil
+
+            SendMatchNotification(capitalize(team) .. ' flag has been returned.', team)
+        elseif status == 'picked' then
+            Config.TeamData[team]['enemyFlagCarrier'] = source
+            SendMatchNotification(capitalize(team) .. ' flag has been picked up.', team)
+        elseif status == 'capture' then
+            local enemyTeam = nil
+            if team == 'blue' then 
+                enemyTeam = 'red'
+            elseif team == 'red' then 
+                enemyTeam = 'blue'
+            end
+
+            if #(coords - Config.TeamData[team]['baseflagCoords'].xyz) < 4 then
+                if DoesEntityExist(NetworkGetEntityFromNetworkId(Config.TeamData[enemyTeam]['flagNet'])) then
+                    DeleteEntity(NetworkGetEntityFromNetworkId(Config.TeamData[enemyTeam]['flagNet']))
+                end
+
+                Wait(100)
+                local respawnCoords = Config.TeamData[enemyTeam]['baseflagCoords']
+                local ent = CreateObject(Config.TeamData[enemyTeam]['prop'], respawnCoords.x, respawnCoords.y, respawnCoords.z-1.0, true, true, false)
+                while not DoesEntityExist(ent) do
+                    Wait(10)
+                end
+                Wait(100)
+                SetEntityHeading(ent, respawnCoords.w)
+                FreezeEntityPosition(ent, true)
+                SendMatchNotification(capitalize(enemyTeam) .. ' flag has been captured.', enemyTeam)
+                Config.TeamData[enemyTeam]['currentflagCoords'] = GetEntityCoords(ent)
+                Config.TeamData[enemyTeam]['flagNet'] = NetworkGetNetworkIdFromEntity(ent)
+                Config.TeamData[team]['points'] = Config.TeamData[team]['points'] + 1
+
+                if Config.TeamData[team]['points'] == Config.Rules['maxScore'] then
+                    endCTFMatch(team, enemyTeam, false)
+                end
+                status = 'returned'
+            end
+            team = enemyTeam
+        end
+        Config.TeamData[team]['flagStatus'] = status
+        local scores = {['red'] = Config.TeamData['red']['points'], ['blue'] = Config.TeamData['blue']['points']}
+        TriggerClientEvent('js5m-ctf:client:flagStatus', -1, team, Config.TeamData[team]['flagStatus'], Config.TeamData[team]['currentflagCoords'], Config.TeamData[team]['flagNet'], source, scores)
+    end
+end)
+
+lib.callback.register('js5m-ctf:server:joinTeam', function(source, team)
+    Config.TeamData[team]['members'][#Config.TeamData[team]['members']+1] = {src = source, name = GetPlayerName(source)}
+    return true
+end)
+
+lib.callback.register('js5m-ctf:server:selectMap', function(source, map)
+    if GetPlayerName(source) ~= Config.MatchInfo['owner'] then return end
+    Config.MatchInfo['chosenMap'] = map
+    local redCoords = Config.Maps[map]['red']
+    local blueCoords = Config.Maps[map]['blue']
+    Config.TeamData['red']['currentflagCoords'] = redCoords
+    Config.TeamData['red']['baseflagCoords'] = redCoords
+
+    Config.TeamData['blue']['currentflagCoords'] = blueCoords
+    Config.TeamData['blue']['baseflagCoords'] = blueCoords
+    return true
+end)
+
+lib.callback.register('js5m-ctf:server:createMatch', function(source)
+    if not CheckRestrictedUsers(source) then return end
+    if Config.MatchInfo.owner == nil then
+        Config.OrigMatchInfo = lib.table.deepclone(Config.MatchInfo)
+        Config.OrigTeamData = lib.table.deepclone(Config.TeamData)
+        Config.MatchInfo.owner = GetPlayerName(source)
+        TriggerClientEvent('js5m-ctf:client:matchInit', -1, true)
+        return true
+    elseif Config.MatchInfo.owner == GetPlayerName(source) then
+        return true
+    else
+        return false
+    end
+end)
+
+lib.callback.register('js5m-ctf:server:getMatchData', function(source)
+    return {teamdata = Config.TeamData, map = Config.MatchInfo['chosenMap']}
+end)
+
+lib.callback.register('js5m-ctf:server:revivePlayer', function(source)
+    if not isCTFPlayer(source) then return false end
+    TriggerClientEvent('hospital:client:Revive', source, true) --qb revive event
+    TriggerClientEvent('esx_ambulancejob:revive', source) --esx revive event
+    return true
+end)
+
+lib.callback.register('js5m-ctf:server:adminEndMatch', function(source)
+    if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
+    SendMatchNotification('Admin has ended the match.', 'admin')
+
+    if Config.TeamData['red']['points'] > Config.TeamData['blue']['points'] then
+        endCTFMatch('red', 'blue', false)
+    elseif Config.TeamData['blue']['points'] > Config.TeamData['red']['points'] then
+        endCTFMatch('red', 'blue', false)
+    elseif Config.TeamData['blue']['points'] == Config.TeamData['red']['points'] then
+        endCTFMatch('red', 'blue', true)
+    end    
+end)
+
+RegisterServerEvent('js5m-ctf:server:startCTF', function()
+    if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
+    if Config.MatchInfo.started == true then return end
+    if Config.MatchInfo.chosenMap == 0 then return end
+    local playerCount = 0
+    local sources = {}
+    for k, v in pairs(Config.TeamData) do
+        local ent = CreateObject(Config.TeamData[k]['prop'], v.currentflagCoords.x, v.currentflagCoords.y, v.currentflagCoords.z-1.0, true, true, false)
+        while not DoesEntityExist(ent) do
+            Wait(10)
+        end
+        Wait(100)
+        SetEntityHeading(ent, v.currentflagCoords.w)
+        FreezeEntityPosition(ent, true)
+        Config.TeamData[k]['flagNet'] = NetworkGetNetworkIdFromEntity(ent)
+        for i = 1, #v.members, 1 do
+            table.insert(sources, v.members[i]['src'])
+            playerCount = playerCount + 1
+        end
+    end
+
+    if playerCount > 0 then
+        Config.MatchInfo.sources = sources
+        TriggerClientEvent('js5m-ctf:client:startCTF', -1, Config.TeamData)
+        Config.MatchInfo.started = true
+    else
+        --
+    end
+end)
+
+RegisterServerEvent('js5m-ctf:server:endCTF', function()
+    if not Config.MatchInfo.started then return end
+    if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
+    SendMatchNotification('Admin has ended the match.', 'admin')
+
+    print('red', Config.TeamData['red']['points'])
+    print('blue', Config.TeamData['blue']['points'])
+    if Config.TeamData['red']['points'] > Config.TeamData['blue']['points'] then
+        endCTFMatch('red', 'blue', false)
+    elseif Config.TeamData['blue']['points'] > Config.TeamData['red']['points'] then
+        endCTFMatch('red', 'blue', false)
+    elseif Config.TeamData['blue']['points'] == Config.TeamData['red']['points'] then
+        endCTFMatch('red', 'blue', true)
+    end
+end)
+
+RegisterServerEvent('js5m-ctf:server:missingFlags', function()
+    print('[' .. GetCurrentResourceName() .. '] Missing ctf flag models')
+end)
