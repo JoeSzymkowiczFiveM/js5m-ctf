@@ -49,6 +49,7 @@ Once the match has been created the admin can:
 
 ## Dependencies
 - [ox_lib](https://github.com/overextended/ox_lib)
+- [assets_ctfflags](https://github.com/JoeSzymkowiczFiveM/assets_ctfflags) - These are the models specified in the existing game config. I guess you could technically use any other model in FiveM, you would just need to specify them in the game config.
 - qb-core/qbox/ESX - When autoRespawn is set to true, the script calls the revive event compatible with these frameworks. Compatibility can be expanded to other frameworks if someone wants to do a PR or send me the event names.
 
 ## Preview
