@@ -44,7 +44,7 @@ Customizations of the rules and even the colors of the two team can be made with
 
 **restrictedCreation** - If true, restricts match creation to a list of user licenses.
 
-**showZoneBorder** - This turns zones debug setting on. I could see why you want this on, but I personally things its stupid.
+**showZoneBorder** - This turns zones debug setting on. I could see why you want this on, but I personally think its stupid.
 
 ## Credit
 - [Snipe](https://github.com/pushkart2) A big thanks to Snipe and his partner for creating the scoreboard included in this resource.
