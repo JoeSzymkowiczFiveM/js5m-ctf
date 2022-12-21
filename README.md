@@ -46,9 +46,6 @@ Customizations of the rules and even the colors of the two team can be made with
 
 **showZoneBorder** - This turns zones debug setting on. I could see why you want this on, but I personally think its stupid.
 
-## Credit
-- [Snipe](https://github.com/pushkart2) A big thanks to Snipe and his partner for creating the scoreboard included in this resource.
-
 ## Dependencies
 - [ox_lib](https://github.com/overextended/ox_lib)
 - [assets_ctfflags](https://github.com/JoeSzymkowiczFiveM/assets_ctfflags) - These are the models specified in the existing game config. I guess you could technically use any other model in FiveM, you would just need to specify them in the game config.
