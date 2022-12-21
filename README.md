@@ -32,6 +32,7 @@ Once the match has been created the admin can:
 ![image](https://user-images.githubusercontent.com/70592880/208991356-f06819d4-643f-4249-bccd-f4448da4c6dc.png)
 
 ## Customized Rulesets/Config
+Customizations of the rules and even the colors of the two team can be made within the config.
 **allowVehicles** - Prevents players from entering vehicles if false.
 
 **maxScore** - Sets the score limit to win the match.
