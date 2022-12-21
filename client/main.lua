@@ -342,29 +342,37 @@ end)
 
 RegisterCommand("ctfmenu", function()
     if not matchInit then return end
-    lib.callback('js5m-ctf:server:getMatchData', false, function(data)
-        CTFMenu(data.teamdata, data.map)
-    end)
+    if not matchStarted or matchOwner then
+        lib.callback('js5m-ctf:server:getMatchData', false, function(data)
+            CTFMenu(data.teamdata, data.map)
+        end)
+    end
 end)
 
 RegisterNetEvent('js5m-ctf:client:joinTeam', function(args)
     local team = args.team
-    if myTeam then return end
     lib.callback('js5m-ctf:server:joinTeam', false, function(response)
         if response then
             myTeam = team
             SetEnemyTeam()
         end
     end, team)
-    return true
+end)
+
+RegisterNetEvent('js5m-ctf:client:removeFromTeam', function()
+    if not myTeam then return end
+    lib.callback('js5m-ctf:server:removeFromTeam', false, function(response)
+        if response then
+            myTeam = nil
+            enemyTeam = nil
+        end
+    end, myTeam)
 end)
 
 RegisterNetEvent('js5m-ctf:client:selectMap', function(args)
-    local map = args.map
     if not matchOwner then return end
-    lib.callback('js5m-ctf:server:selectMap', false, function(response) -- fix this
-    end, map)
-    return true
+    local map = args.map
+    lib.callback.await('js5m-ctf:server:selectMap', false, map)
 end)
 
 function CTFMenu(matchData, map)
@@ -427,6 +435,15 @@ function CTFMenu(matchData, map)
             icon = 'fa-solid fa-user-plus',
             iconColor = Config.MatchInfo['notifyStyle']['blue']['backgroundColor'],
         }
+
+        if myTeam then
+            options[#options+1] = {
+                title = 'Remove from team',
+                description = "Remove from your currently selected team",
+                event = 'js5m-ctf:client:removeFromTeam',
+                icon = 'fa-solid fa-user-minus',
+            }
+        end
     end
 
     if matchOwner then

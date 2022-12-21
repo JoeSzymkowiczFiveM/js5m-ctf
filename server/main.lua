@@ -183,7 +183,26 @@ RegisterServerEvent('js5m-ctf:server:flagStatus', function(team, status, coords)
 end)
 
 lib.callback.register('js5m-ctf:server:joinTeam', function(source, team)
-    Config.TeamData[team]['members'][#Config.TeamData[team]['members']+1] = {src = source, name = GetPlayerName(source)}
+    for k, v in pairs(Config.TeamData) do
+        for a, s in pairs(v['members']) do
+            if source == s.src then
+                table.remove(Config.TeamData[k]['members'], a)
+                break
+            end
+        end
+    end
+    table.insert(Config.TeamData[team]['members'], {src = source, name = GetPlayerName(source)})
+    return true
+end)
+
+lib.callback.register('js5m-ctf:server:removeFromTeam', function(source, team)
+    if not CheckRestrictedUsers(source) then return true end
+    for k, v in pairs(Config.TeamData[team]['members']) do
+        if source == v.src then
+            table.remove(Config.TeamData[team]['members'], k)
+            break
+        end
+    end
     return true
 end)
 
@@ -240,7 +259,8 @@ lib.callback.register('js5m-ctf:server:adminEndMatch', function(source)
 end)
 
 RegisterServerEvent('js5m-ctf:server:startCTF', function()
-    if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
+    local src = source
+    if Config.MatchInfo.owner ~= GetPlayerName(src) then return end
     if Config.MatchInfo.started == true then return end
     if Config.MatchInfo.chosenMap == 0 then return end
     local playerCount = 0
@@ -265,7 +285,7 @@ RegisterServerEvent('js5m-ctf:server:startCTF', function()
         TriggerClientEvent('js5m-ctf:client:startCTF', -1, Config.TeamData)
         Config.MatchInfo.started = true
     else
-        --
+        TriggerClientEvent('ox_lib:notify', src, {title = 'CTF', description = 'Cannot start match with 0 players.', type = 'error'})
     end
 end)
 
@@ -274,8 +294,6 @@ RegisterServerEvent('js5m-ctf:server:endCTF', function()
     if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
     SendMatchNotification('Admin has ended the match.', 'admin')
 
-    print('red', Config.TeamData['red']['points'])
-    print('blue', Config.TeamData['blue']['points'])
     if Config.TeamData['red']['points'] > Config.TeamData['blue']['points'] then
         endCTFMatch('red', 'blue', false)
     elseif Config.TeamData['blue']['points'] > Config.TeamData['red']['points'] then
