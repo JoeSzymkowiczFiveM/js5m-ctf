@@ -6,6 +6,7 @@ This is a Capture The Flag game mode for FiveM, with custom flag props and custo
  - If your flag is taken, hunt down the flag carrier, and try to kill them and return your flag by touching it while it's dropped. This will return your flag back to your base.
  - If your teammate dies with the enemy flag, you can pickup the dropped flag.
  - You can only score a point by bringing the enemy flag back to your team's returned flag.
+ - If you are carrying the flag, and exit the match area, the enemy flag will be returned to them.
 
 ## Commands
 **initctf**
@@ -52,3 +53,15 @@ Once the match has been created the admin can:
 
 ## Preview
 [Kill opponent and return flag](https://streamable.com/lv8hgr)
+
+[Steal the enemy flag](https://streamable.com/dzfvf1)
+
+[Capture the flag and win](https://streamable.com/ms48lf)
+
+[Init and CTF Menu](https://streamable.com/vonjif)
+
+### TODO
+- [ ] Handling around disconnected players and rejoining the game
+- [ ] Admin pausing the game
+- [ ] More maps
+- [ ] Powerups - temporary speed and health modifiers
