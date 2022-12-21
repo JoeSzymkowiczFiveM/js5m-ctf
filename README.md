@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/70592880/208999774-f85d79c7-691b-4614-b438-3883fd2ab80d.png)
 ## Description
-This is a Capture The Flag game mode for FiveM, with custom flag props and customizable rulesets. Two teams fight to capture the opponents flag, while their flag is still in base. 
+This is a Capture The Flag game mode for FiveM, with custom flag props and customizable rulesets. Two teams fight to capture eachothers flag.
 
 ## Basics
  - If your flag is taken, hunt down the flag carrier, and try to kill them and return your flag by touching it while it's dropped. This will return your flag back to your base.
