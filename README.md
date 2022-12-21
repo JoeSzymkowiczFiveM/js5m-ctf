@@ -61,6 +61,8 @@ Once the match has been created the admin can:
 [Init and CTF Menu](https://streamable.com/vonjif)
 
 ### TODO
+- [ ] Better way of displaying course boundary
+- [ ] Warmup
 - [ ] Handling around disconnected players and rejoining the game
 - [ ] Admin pausing the game
 - [ ] More maps
