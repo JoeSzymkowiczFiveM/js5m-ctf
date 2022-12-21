@@ -63,6 +63,7 @@ Customizations of the rules and even the colors of the two team can be made with
 ### TODO
 - [ ] Better way of displaying course boundary
 - [ ] Warmup
+- [ ] Spectator options
 - [ ] Handling around disconnected players and rejoining the game
 - [ ] Admin pausing the game
 - [ ] More maps
