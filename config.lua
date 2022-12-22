@@ -32,7 +32,6 @@ Config.Rules = {
     ['respawnTime'] = 5, --in seconds. delay before respawn, when you die, if autoRespawn
     ['restrictedCreation'] = true, --if true, restricts match creation to a list of user licenses.
     ['restrictedCreators'] = { --this is the lise of licenses that can create matches if restrictedCreation is true
-        'license:b73e3e039dc918c533efd909722eb1da07231c2a',
         'license:asdfopiu1234567890asdfasdf12345678900000',
     },
     ['showZoneBorder'] = false, --this turns zones debug setting on. I could see why you want this on, but I personally things its stupid. 
