@@ -3,6 +3,13 @@
 This is a Capture The Flag game mode for FiveM, with custom flag props and customizable rulesets. Two teams fight to capture eachothers flag.
 
 ## Basics
+ - A player uses the command `initctf` to initiate a match. This person becomes the match admin. This notifies all players that a match is being setup.
+ - The match admin selects a map to play on before players can join teams.
+ - Once a map is selected, other players can join a team using the command `ctfmenu`.
+ - When at least one player joins the match, the match admin can start the match.
+ - Players can change teams before the match has begun. Match admins can change the map before the match has begun.
+ 
+## Rules
  - If your flag is taken, hunt down the flag carrier, and try to kill them and return your flag by touching it while it's dropped. This will return your flag back to your base.
  - If your teammate dies with the enemy flag, you can pickup the dropped flag.
  - You can only score a point by bringing the enemy flag back to your team's returned flag.
