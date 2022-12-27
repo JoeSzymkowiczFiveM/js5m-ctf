@@ -75,3 +75,6 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] Admin pausing the game
 - [ ] More maps
 - [ ] Powerups - temporary speed and health modifiers
+
+## Discord
+https://discord.gg/5vPGxyCB4z
