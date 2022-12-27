@@ -77,4 +77,4 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] Powerups - temporary speed and health modifiers
 
 ## Discord
-https://discord.gg/5vPGxyCB4z
+[Joe Szymkowicz FiveM Development](https://discord.gg/5vPGxyCB4z)
