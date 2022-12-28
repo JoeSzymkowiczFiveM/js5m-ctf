@@ -5,6 +5,15 @@ Config.Maps = {
         name = 'Paleto Carnage',
         red = vector4(118.48, 6580.36, 31.73, 142.1),
         blue = vector4(-426.43, 6029.43, 31.49, 316.55),
+        powerups = {
+            {
+                name = 'haste',
+                active = false,
+                prop = `prop_mk_boost`,
+                propNet = nil,
+                coords = vector4(-147.43, 6343.54, 31.52, 140.09),
+            },
+        },
         zone = {
             style = 'box',
             coords = vec3(-204.74, 6322.84, 41.45),
@@ -16,6 +25,22 @@ Config.Maps = {
         name = 'Redwood Rampage',
         red = vector4(1159.52, 2252.03, 50.01, 45.16),
         blue = vector4(895.33, 2469.98, 50.92, 244.78),
+        powerups = {
+            {
+                name = 'haste',
+                active = false,
+                prop = `prop_mk_boost`,
+                propNet = nil,
+                coords = vector4(1022.08, 2407.56, 55.19, 276.68),
+            },
+            {
+                name = 'haste',
+                active = false,
+                prop = `prop_mk_boost`,
+                propNet = nil,
+                coords = vector4(1050.81, 2285.67, 49.39, 92.12),
+            },
+        },
         zone = {
             style = 'box',
             coords = vec3(1028.42, 2375.92, 49.16),
@@ -32,9 +57,12 @@ Config.Rules = {
     ['respawnTime'] = 5, --in seconds. delay before respawn, when you die, if autoRespawn
     ['restrictedCreation'] = true, --if true, restricts match creation to a list of user licenses.
     ['restrictedCreators'] = { --this is the lise of licenses that can create matches if restrictedCreation is true
+        'license:b73e3e039dc918c533efd909722eb1da07231c2a',
         'license:asdfopiu1234567890asdfasdf12345678900000',
     },
-    ['showZoneBorder'] = false, --this turns zones debug setting on. I could see why you want this on, but I personally things its stupid. 
+    ['showZoneBorder'] = false, --this turns zones debug setting on. I could see why you want this on, but I personally things its stupid.
+    ['enablePowerups'] = true, --enables powerups spawning during the match
+    ['powerupDelay'] = 90, --seconds before the first powerups spawn, and subsequent spawns after pickup, if enablePowerups is true
 }
 
 Config.MatchInfo = {
@@ -55,7 +83,8 @@ Config.MatchInfo = {
             color = '#ffffff'
         },
     },
-    chosenMap = 0
+    chosenMap = 0,
+    powerups = {},
 }
 
 Config.TeamData = {

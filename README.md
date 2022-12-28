@@ -53,6 +53,10 @@ Customizations of the rules and even the colors of the two team can be made with
 
 **showZoneBorder** - This turns zones debug setting on. I could see why you want this on, but I personally think its stupid.
 
+**enablePowerups** - Determines if powerups will spawn during the match.
+
+**powerupDelay** - After the initial start of the match, and after each pickup, determines the delay until the next powerup spawn, in seconds.
+
 ## Dependencies
 - [ox_lib](https://github.com/overextended/ox_lib)
 - [assets_ctfflags](https://github.com/JoeSzymkowiczFiveM/assets_ctfflags) - These are the models specified in the existing game config. I guess you could technically use any other model in FiveM, you would just need to specify them in the game config.
@@ -74,7 +78,7 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] Handling around players rejoining the game
 - [ ] Admin pausing the game
 - [ ] More maps
-- [ ] Powerups - temporary speed and health modifiers
+- [x] Powerups - temporary speed and health modifiers
 
 ## Discord
 [Joe Szymkowicz FiveM Development](https://discord.gg/5vPGxyCB4z)

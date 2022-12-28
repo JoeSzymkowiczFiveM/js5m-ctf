@@ -34,10 +34,12 @@ CreateThread(function()
     end
 end)
 
--- AddEventHandler('onResourceStart', function(resourceName)
---     if GetCurrentResourceName() == resourceName then
---     end
--- end)
+AddEventHandler('onResourceStart', function(resourceName)
+    if GetCurrentResourceName() == resourceName then
+        Config.OrigMatchInfo = lib.table.deepclone(Config.MatchInfo)
+        Config.OrigTeamData = lib.table.deepclone(Config.TeamData)
+    end
+end)
 
 -- AddEventHandler('onResourceStop', function(resourceName)
 --     if GetCurrentResourceName() == resourceName then
@@ -167,6 +169,30 @@ local function AttachFlag(net)
     TriggerServerEvent('js5m-ctf:server:flagStatus', enemyTeam, 'picked', GetEntityCoords(flag))
 end
 
+local function PowerupEffect(powerup)
+    if Config.MatchInfo['powerups'][powerup]['name'] == 'haste' then
+        CreateThread(function()
+            local response = lib.callback.await('js5m-ctf:server:getPowerup', false, powerup)
+            if not response then return end
+            local startStamina = 20
+            SetRunSprintMultiplierForPlayer(cache.playerId, 1.49)
+            while startStamina > 0 do 
+                Wait(1000)
+                if math.random(1, 100) < 20 then
+                    RestorePlayerStamina(cache.playerId, 1.0)
+                end
+                startStamina = startStamina - 1
+                if math.random(1, 300) < 10 then
+                    Wait(math.random(3000, 6000))
+                end
+            end
+
+            startStamina = 0
+            SetRunSprintMultiplierForPlayer(cache.playerId, 1.0)
+        end)
+    end
+end
+
 local function CaptureFlag(net)
     local flag = NetworkGetEntityFromNetworkId(net)
     carryingFlag = false
@@ -231,6 +257,17 @@ local function StartMatch()
                             end
                         end
                     end
+                    for i = 1, #Config.MatchInfo['powerups'], 1 do
+                        local v = Config.MatchInfo['powerups'][i]
+                        if #(coords - v['coords'].xyz) < 40 then
+                            sleep = 10
+                            if #(coords - v['coords'].xyz) < 1.5 then
+                                --TaskPlayAnim(ped, "pickup_object" ,"putdown_low" ,8.0, -8.0, -1, 1, 0, false, false, false )
+                                PowerupEffect(i)
+                                Wait(2000)
+                            end
+                        end
+                    end
                 else
                     GetDeaded()
                 end
@@ -266,10 +303,6 @@ RegisterCommand("dropflag", function()
     DetachFlag()
 end)
 
--- local function onEnter(self)
---     print('entered zone', self.id)
--- end
-
 local function onExit(self)
     if matchStarted and carryingFlag then
         TriggerServerEvent('js5m-ctf:server:flagStatus', enemyTeam, 'returned', nil)
@@ -277,9 +310,9 @@ local function onExit(self)
     end
 end
 
-RegisterNetEvent('js5m-ctf:client:startCTF', function(config)
-    Config.OrigMatchInfo = lib.table.deepclone(Config.MatchInfo)
-    Config.OrigTeamData = lib.table.deepclone(Config.TeamData)
+RegisterNetEvent('js5m-ctf:client:startCTF', function(config, map)
+    matchMap = map
+    Config.MatchInfo['powerups'] = lib.table.deepclone(Config.Maps[matchMap]['powerups'])
     Config.TeamData = config
     local randomBaseSpawn = GetRandomBaseSpawn(myTeam)
     SetEntityHeading(cache.ped, randomBaseSpawn.w)
@@ -542,4 +575,8 @@ RegisterNetEvent("js5m-ctf:client:endGame",function(message)
     matchZone:remove()
     Config.MatchInfo = lib.table.deepclone(Config.OrigMatchInfo)
     Config.TeamData = lib.table.deepclone(Config.OrigTeamData)
+end)
+
+RegisterNetEvent("js5m-ctf:client:activatePowerup",function(status, powerup)
+    Config.MatchInfo['powerups'][powerup]['active'] = status
 end)
