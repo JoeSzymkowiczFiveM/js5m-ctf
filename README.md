@@ -78,7 +78,8 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] Handling around players rejoining the game
 - [ ] Admin pausing the game
 - [ ] More maps
-- [x] Powerups - temporary speed and health modifiers
+- [x] Powerups - Initially added Haste
+- [ ] Add more powerups
 
 ## Discord
 [Joe Szymkowicz FiveM Development](https://discord.gg/5vPGxyCB4z)
