@@ -30,6 +30,7 @@ Once the match has been created the admin can:
  - Choose the map the match is played on.
  - Start the match, given there are players.
  - End the match while the game is in progress.
+ - Pause the match. This will freeze all the match players in place, until unpaused.
 
 ## Included maps/courses
 ### Paleto Carnage
@@ -76,7 +77,7 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] Warmup
 - [ ] Spectator options
 - [ ] Handling around players rejoining the game
-- [ ] Admin pausing the game
+- [x] Admin pausing the game
 - [ ] More maps
 - [x] Powerups - Initially added Haste
 - [ ] Add more powerups
