@@ -1,5 +1,11 @@
 Config = {}
 
+Config.Core = "QBCore" -- ESX or QBCore
+Config.CoreFolderName = "qb-core"  -- es_extended || qb-core
+
+Config.PlayerLoadedEvent = "QBCore:Client:OnPlayerLoaded" -- esx:playerLoaded || QBCore:Client:OnPlayerLoaded
+Config.PlayerUnloadEvent = "QBCore:Client:OnPlayerUnload" -- esx:onPlayerLogout || QBCore:Client:OnPlayerUnload  
+
 Config.Maps = {
     {
         name = 'Paleto Carnage',
@@ -12,6 +18,7 @@ Config.Maps = {
                 prop = `prop_mk_boost`,
                 propNet = nil,
                 coords = vector4(-147.43, 6343.54, 31.52, 140.09),
+                nextSpawnTime = nil,
             },
         },
         zone = {
@@ -32,6 +39,7 @@ Config.Maps = {
                 prop = `prop_mk_boost`,
                 propNet = nil,
                 coords = vector4(1022.08, 2407.56, 55.19, 276.68),
+                nextSpawnTime = nil,
             },
             {
                 name = 'haste',
@@ -39,6 +47,7 @@ Config.Maps = {
                 prop = `prop_mk_boost`,
                 propNet = nil,
                 coords = vector4(1050.81, 2285.67, 49.39, 92.12),
+                nextSpawnTime = nil,
             },
         },
         zone = {
@@ -68,6 +77,7 @@ Config.Rules = {
 Config.MatchInfo = {
     owner = nil,
     started = false,
+    paused = false,
     sources = {},
     notifyStyle = {
         ['red'] = {
@@ -92,11 +102,10 @@ Config.TeamData = {
         members = {},
         flagStatus = 'returned',
         flagNet = nil,
-        flagObj = nil,
         flagBlip = nil,
         currentflagCoords = nil,
         baseflagCoords = nil,
-        blipColor = 79,
+        blipColor = 79, --red, https://docs.fivem.net/docs/game-references/blips/
         points = 0,
         enemyFlagCarrier = nil,
         prop = `ctfredflag`
@@ -105,11 +114,10 @@ Config.TeamData = {
         members = {},
         flagStatus = 'returned',
         flagNet = nil,
-        flagObj = nil,
         flagBlip = nil,
         currentflagCoords = nil,
         baseflagCoords = nil,
-        blipColor = 80,
+        blipColor = 80, --blue, https://docs.fivem.net/docs/game-references/blips/
         points = 0,
         enemyFlagCarrier = nil,
         prop = `ctfblueflag`

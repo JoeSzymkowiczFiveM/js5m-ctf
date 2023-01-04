@@ -353,7 +353,7 @@ RegisterServerEvent('js5m-ctf:server:endCTF', function()
 end)
 
 RegisterServerEvent('js5m-ctf:server:missingFlags', function()
-    print('[' .. GetCurrentResourceName() .. '] Missing ctf flag models')
+    print("^1[Missing Flags] ^0Missing CTF flag models ^0!")
 end)
 
 lib.callback.register('js5m-ctf:server:getPowerup', function(source, powerup)
@@ -369,4 +369,20 @@ lib.callback.register('js5m-ctf:server:getPowerup', function(source, powerup)
     TriggerClientEvent('js5m-ctf:client:activatePowerup', -1, Config.MatchInfo['powerups'][powerup]['active'], powerup)
     ActivatePowerUp(powerup)
     return true
+end)
+
+RegisterServerEvent('js5m-ctf:server:adminPauseMatch', function()
+    if Config.MatchInfo.owner ~= GetPlayerName(source) then return end
+    
+
+    Config.MatchInfo['paused'] = not Config.MatchInfo['paused']
+    if Config.MatchInfo['paused'] then
+        SendMatchNotification('Admin has paused the match.', 'admin')
+    elseif not Config.MatchInfo['paused'] then
+        SendMatchNotification('Admin has unpaused the match.', 'admin')
+    end
+    for i = 1, #Config.MatchInfo.sources, 1 do
+        TriggerClientEvent('js5m-ctf:client:pausePlayer', Config.MatchInfo.sources[i], Config.MatchInfo['paused'])
+    end
+
 end)

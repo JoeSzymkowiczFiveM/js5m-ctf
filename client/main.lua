@@ -34,13 +34,6 @@ CreateThread(function()
     end
 end)
 
-AddEventHandler('onResourceStart', function(resourceName)
-    if GetCurrentResourceName() == resourceName then
-        Config.OrigMatchInfo = lib.table.deepclone(Config.MatchInfo)
-        Config.OrigTeamData = lib.table.deepclone(Config.TeamData)
-    end
-end)
-
 -- AddEventHandler('onResourceStop', function(resourceName)
 --     if GetCurrentResourceName() == resourceName then
 --     end
@@ -321,8 +314,6 @@ RegisterNetEvent('js5m-ctf:client:startCTF', function(config, map)
     for k, v in pairs(Config.TeamData) do
         Config.TeamData[k]['flagBlip'] = AddBlipForRadius(v.currentflagCoords.xyz, 40.0)
         SetBlipColour(v.flagBlip, v.blipColor)
-
-        Config.TeamData[k]['flagObj'] = NetToObj(v.flagNet)
     end
 
     local chosenZone = Config.Maps[matchMap].zone
@@ -482,11 +473,20 @@ function CTFMenu(matchData, map)
     if matchOwner then
         if matchStarted then
             options[#options+1] = {
+                title = 'Pause/Unpause Match',
+                description = "Pause/Unpause the CTF match immediately; Pausing freezes players",
+                serverEvent = 'js5m-ctf:server:adminPauseMatch',
+                icon = 'fa-solid fa-pause'
+            }
+
+            options[#options+1] = {
                 title = 'End Match',
                 description = "End the CTF match immediately",
                 serverEvent = 'js5m-ctf:server:endCTF',
                 icon = 'fa-solid fa-stop'
             }
+
+            
         elseif not matchStarted and matchMap ~= 0 then
             options[#options+1] = {
                 title = 'Start Match',
@@ -511,14 +511,15 @@ function CTFMenu(matchData, map)
                 args = {map = k},
             }
         end
-        
+
+        registeredMenu[#registeredMenu+1] = {
+            id = 'js5m-ctf_map_menu',
+            title = 'Map Selection',
+            menu = 'js5m-ctf_menu',
+            options = mapOptions
+        }
     end
-    registeredMenu[#registeredMenu+1] = {
-        id = 'js5m-ctf_map_menu',
-        title = 'Map Selection',
-        menu = 'js5m-ctf_menu',
-        options = mapOptions
-    }
+    
 
     registeredMenu["options"] = options
     
@@ -580,3 +581,10 @@ end)
 RegisterNetEvent("js5m-ctf:client:activatePowerup",function(status, powerup)
     Config.MatchInfo['powerups'][powerup]['active'] = status
 end)
+
+RegisterNetEvent("js5m-ctf:client:pausePlayer", function(pause)
+    FreezeEntityPosition(PlayerPedId(), pause)
+end)
+
+Config.OrigMatchInfo = lib.table.deepclone(Config.MatchInfo)
+Config.OrigTeamData = lib.table.deepclone(Config.TeamData)
