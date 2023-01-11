@@ -81,6 +81,7 @@ Customizations of the rules and even the colors of the two team can be made with
 - [ ] More maps
 - [x] Powerups - Initially added Haste
 - [ ] Add more powerups
+- [ ] Update check
 
 ## Discord
 [Joe Szymkowicz FiveM Development](https://discord.gg/5vPGxyCB4z)
